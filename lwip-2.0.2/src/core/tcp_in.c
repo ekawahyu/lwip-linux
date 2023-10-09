@@ -380,7 +380,6 @@ tcp_input(struct pbuf *p, struct netif *inp)
       }
     }
     tcp_input_pcb = pcb;
-
     err = tcp_process(pcb);
     /* A return value of ERR_ABRT means that tcp_abort() was called
        and that the pcb has been freed. If so, we don't do anything. */
@@ -531,7 +530,6 @@ aborted:
     if (!(TCPH_FLAGS(tcphdr) & TCP_RST)) {
       TCP_STATS_INC(tcp.proterr);
       TCP_STATS_INC(tcp.drop);
-      lwip_linux_dbg(("[%s:%u] TCP reset\n", __FILE__, __LINE__));
       tcp_rst(ackno, seqno + tcplen, ip_current_dest_addr(),
         ip_current_src_addr(), tcphdr->dest, tcphdr->src);
     }
@@ -574,7 +572,6 @@ tcp_listen_input(struct tcp_pcb_listen *pcb)
     /* For incoming segments with the ACK flag set, respond with a
        RST. */
     LWIP_DEBUGF(TCP_RST_DEBUG, ("tcp_listen_input: ACK in LISTEN, sending reset\n"));
-    lwip_linux_dbg(("[%s:%u] TCP reset\n", __FILE__, __LINE__));
     tcp_rst(ackno, seqno + tcplen, ip_current_dest_addr(),
       ip_current_src_addr(), tcphdr->dest, tcphdr->src);
   } else if (flags & TCP_SYN) {
@@ -673,7 +670,6 @@ tcp_timewait_input(struct tcp_pcb *pcb)
        should be sent in reply */
     if (TCP_SEQ_BETWEEN(seqno, pcb->rcv_nxt, pcb->rcv_nxt + pcb->rcv_wnd)) {
       /* If the SYN is in the window it is an error, send a reset */
-      lwip_linux_dbg(("[%s:%u] TCP reset\n", __FILE__, __LINE__));
       tcp_rst(ackno, seqno + tcplen, ip_current_dest_addr(),
         ip_current_src_addr(), tcphdr->dest, tcphdr->src);
       return;
@@ -824,7 +820,6 @@ tcp_process(struct tcp_pcb *pcb)
     /* received ACK? possibly a half-open connection */
     else if (flags & TCP_ACK) {
       /* send a RST to bring the other side in a non-synchronized state. */
-      lwip_linux_dbg(("[%s:%u] TCP reset\n", __FILE__, __LINE__));
       tcp_rst(ackno, seqno + tcplen, ip_current_dest_addr(),
         ip_current_src_addr(), tcphdr->dest, tcphdr->src);
       /* Resend SYN immediately (don't wait for rto timeout) to establish
@@ -886,7 +881,6 @@ tcp_process(struct tcp_pcb *pcb)
         }
       } else {
         /* incorrect ACK number, send RST */
-    	lwip_linux_dbg(("[%s:%u] TCP reset\n", __FILE__, __LINE__));
         tcp_rst(ackno, seqno + tcplen, ip_current_dest_addr(),
           ip_current_src_addr(), tcphdr->dest, tcphdr->src);
       }

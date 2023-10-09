@@ -321,7 +321,6 @@ sys_check_timeouts(void)
     u32_t now;
 
     now = sys_now();
-
     /* this cares for wraparounds */
     diff = now - timeouts_last_time;
     do {

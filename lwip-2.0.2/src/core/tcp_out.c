@@ -1348,7 +1348,6 @@ tcp_rst(u32_t seqno, u32_t ackno,
   struct pbuf *p;
   struct tcp_hdr *tcphdr;
   struct netif *netif;
-
   p = pbuf_alloc(PBUF_IP, TCP_HLEN, PBUF_RAM);
   if (p == NULL) {
     LWIP_DEBUGF(TCP_DEBUG, ("tcp_rst: could not allocate memory for pbuf\n"));

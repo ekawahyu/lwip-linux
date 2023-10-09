@@ -276,8 +276,6 @@ tcp_close_shutdown(struct tcp_pcb *pcb, u8_t rst_on_unacked_data)
          side about this. */
       LWIP_ASSERT("pcb->flags & TF_RXCLOSED", pcb->flags & TF_RXCLOSED);
 
-      lwip_linux_dbg(("[%s:%u] TCP reset\n", __FILE__, __LINE__));
-
       /* don't call tcp_abort here: we must not deallocate the pcb since
          that might not be expected when calling tcp_close */
       tcp_rst(pcb->snd_nxt, pcb->rcv_nxt, &pcb->local_ip, &pcb->remote_ip,
@@ -521,7 +519,6 @@ tcp_abandon(struct tcp_pcb *pcb, int reset)
     tcp_backlog_accepted(pcb);
     if (send_rst) {
       LWIP_DEBUGF(TCP_RST_DEBUG, ("tcp_abandon: sending RST\n"));
-      lwip_linux_dbg(("[%s:%u] TCP reset\n", __FILE__, __LINE__));
       tcp_rst(seqno, ackno, &pcb->local_ip, &pcb->remote_ip, local_port, pcb->remote_port);
     }
     last_state = pcb->state;
@@ -1171,7 +1168,6 @@ tcp_slowtmr_start:
       }
 
       if (pcb_reset) {
-    	lwip_linux_dbg(("[%s:%u] TCP reset\n", __FILE__, __LINE__));
         tcp_rst(pcb->snd_nxt, pcb->rcv_nxt, &pcb->local_ip, &pcb->remote_ip,
                  pcb->local_port, pcb->remote_port);
       }
